@@ -65,6 +65,11 @@ class WindowDemosActivity : AppCompatActivity() {
                 radioGroup.check(R.id.long_dimension_fold_radio_button)
         }
 
+        if (!isFoldable()) {
+            radioGroup.check(R.id.short_dimension_fold_radio_button)
+            radioGroup.getChildAt(0).isEnabled = false
+        }
+
         binding.featuresActivityButton.setOnClickListener { showDisplayFeatures() }
 
         binding.splitLayoutActivityButton.setOnClickListener { showSplitLayout() }
@@ -85,5 +90,15 @@ class WindowDemosActivity : AppCompatActivity() {
         val intent = Intent(this, SplitLayoutActivity::class.java)
         intent.putExtra(BACKEND_TYPE_EXTRA, selectedBackend)
         startActivity(intent)
+    }
+
+    private fun isFoldable(): Boolean {
+        val libraryList = packageManager.systemSharedLibraryNames
+        libraryList?.forEach { libraryName ->
+            if (libraryName.equals("androidx.window.sidecar") ||
+                libraryName.equals("androidx.window.extensions")
+            ) return true
+        }
+        return false
     }
 }
